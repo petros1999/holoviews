@@ -357,6 +357,8 @@ class Dataset(Element):
         if input_pipeline is None:
             input_pipeline = chain_op.instance()
 
+        kwargs['kdims'] = self.kdims
+        kwargs['vdims'] = self.vdims
         init_op = factory.instance(
             output_type=type(self),
             args=[],
