@@ -873,7 +873,7 @@ class Dynamic(param.ParameterizedFunction):
          corresponding visualization should update this stream with
          range changes originating from the newly generated axes.""")
 
-    link_dataset = param.Boolean(default=True, doc="""
+    propagate_dataset = param.Boolean(default=True, doc="""
          Determines whether the output of the operation should inherit
          the .dataset property of the input to the operation. Helpful
          for tracking data providence for user supplied functions,
@@ -991,7 +991,7 @@ class Dynamic(param.ParameterizedFunction):
         def apply(element, *key, **kwargs):
             kwargs = dict(util.resolve_dependent_kwargs(self.p.kwargs), **kwargs)
             processed = self._process(element, key, kwargs)
-            if (self.p.link_dataset and isinstance(element, Dataset) and
+            if (self.p.propagate_dataset and isinstance(element, Dataset) and
                 isinstance(processed, Dataset) and processed._dataset is None):
                 processed._dataset = element.dataset
             return processed

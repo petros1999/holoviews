@@ -98,7 +98,7 @@ class Apply(object):
         self._obj = obj
 
     def __call__(self, apply_function, streams=[], link_inputs=True,
-                 link_dataset=True, dynamic=None, per_element=False, **kwargs):
+                 propagate_dataset=True, dynamic=None, per_element=False, **kwargs):
         """Applies a function to all (Nd)Overlay or Element objects.
 
         Any keyword arguments are passed through to the function. If
@@ -118,7 +118,7 @@ class Apply(object):
             link_inputs (bool, optional): Whether to link the inputs
                 Determines whether Streams and Links attached to
                 original object will be inherited.
-            link_dataset (bool, optional): Whether to link the dataset
+            propagate_dataset (bool, optional): Whether to link the dataset
                 Determines whether the dataset will be inherited.
             dynamic (bool, optional): Whether to make object dynamic
                 By default object is made dynamic if streams are
@@ -194,13 +194,13 @@ class Apply(object):
         if (applies or isinstance(self._obj, HoloMap)) and is_dynamic:
             return Dynamic(self._obj, operation=apply_function, streams=streams,
                            kwargs=kwargs, link_inputs=link_inputs,
-                           link_dataset=link_dataset)
+                           propagate_dataset=propagate_dataset)
         elif applies:
             inner_kwargs = util.resolve_dependent_kwargs(kwargs)
             if hasattr(apply_function, 'dynamic'):
                 inner_kwargs['dynamic'] = False
             new_obj = apply_function(self._obj, **inner_kwargs)
-            if (link_dataset and isinstance(self._obj, Dataset) and
+            if (propagate_dataset and isinstance(self._obj, Dataset) and
                 isinstance(new_obj, Dataset) and new_obj._dataset is None):
                 new_obj._dataset = self._obj.dataset
             return new_obj
@@ -208,7 +208,7 @@ class Apply(object):
             mapped = []
             for k, v in self._obj.data.items():
                 new_val = v.apply(apply_function, dynamic=dynamic, streams=streams,
-                                  link_inputs=link_inputs, link_dataset=link_dataset,
+                                  link_inputs=link_inputs, propagate_dataset=propagate_dataset,
                                   **kwargs)
                 if new_val is not None:
                     mapped.append((k, new_val))

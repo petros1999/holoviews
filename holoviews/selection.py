@@ -443,7 +443,7 @@ class OverlaySelectionDisplay(SelectionDisplay):
         expr = exprs[layer_number]
         if isinstance(expr, dim):
             dataset = element.dataset
-            selection = self._select(dataset, expr, self._cache)
+            selection = self._select(element, dataset, expr, self._cache)
             pipeline = element.pipeline
             if cmap is not None:
                 pipeline = self._inject_cmap_in_pipeline(pipeline, cmap)
@@ -469,7 +469,7 @@ class OverlaySelectionDisplay(SelectionDisplay):
         raise NotImplementedError()
 
     @staticmethod
-    def _select(dataset, selection_expr, cache={}):
+    def _select(element, dataset, selection_expr, cache={}):
         from .element import Curve, Spread
         mask = None
         if dataset._plot_id in cache:
